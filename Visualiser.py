@@ -54,7 +54,6 @@ def Visualiser(file_path,FPS=16, FREQ=50000, TF=2):
     MIN_VALUE=0
     MAX_VALUE=3000
     adc2 = []
-    listOfPeakDetectors=[Mazrah]
 
     TIMER = Timer()
 
