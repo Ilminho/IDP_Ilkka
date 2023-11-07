@@ -47,12 +47,10 @@ class PeakDetector():
     Mazrah=0
 
 
-def Visualiser(file_path,FPS=16, FREQ=50000, TF=2 , normalize=True, peakDetector=PeakDetector.Mazrah, lowpass=True):
+def Visualiser(file_path,FPS=16, FREQ=50000, TF=2):
 
-    stop_animation = False
     CHUNK=math.floor(FREQ/FPS)
     INTERVAL=math.floor(1000/FPS)
-    INTERVALFRAME = math.floor(FREQ/INTERVAL)
     MIN_VALUE=0
     MAX_VALUE=3000
     adc2 = []
@@ -60,8 +58,6 @@ def Visualiser(file_path,FPS=16, FREQ=50000, TF=2 , normalize=True, peakDetector
 
     TIMER = Timer()
 
-    def detectPeaks(chunk,function=PeakDetector.Mazrah):
-        return listOfPeakDetectors[function(chunk)]
 
     def wavelet_denoise(signal, wavelet='db4', level=5):
         """
@@ -124,7 +120,6 @@ def Visualiser(file_path,FPS=16, FREQ=50000, TF=2 , normalize=True, peakDetector
 
 
     fig1, ax1 = plt.subplots()
-    window_size = 700
     csv_stream = pd.read_csv(file_path, chunksize=CHUNK)
 
     ani = FuncAnimation(fig1, update_plot, blit=False, interval=INTERVAL, cache_frame_data=False)
