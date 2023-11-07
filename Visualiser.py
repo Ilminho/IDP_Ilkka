@@ -1,18 +1,10 @@
-import tkinter as tk
-from tkinter import ttk
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.animation import FuncAnimation
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import pywt
-import random
 import math
 from Timer import Timer
-from queue import Queue
-from threading import Thread
-from time import time
 from scipy.signal import find_peaks, savgol_filter
 from Util import roundList, averageOfList
 
@@ -107,26 +99,13 @@ def Visualiser(file_path,FPS=16, FREQ=50000, TF=2 , normalize=True, peakDetector
             
             roundedChunk=roundList(chunkToAdd)
 
-            ######
-            
-            ######
-            
-            
-            #adc2Filtered = savgol_filter(chunkToAdd, 500, 2)
-
-            print(roundedChunk)
-
             adc2.extend(wavelet_denoise(roundedChunk))
             
-            
-            
-
             if(len(adc2)>TF*FREQ):
                 copy=adc2.copy()[CHUNK:]
                 adc2.clear()
                 adc2.extend(copy)
                 
-            
 
             arrayToPlot=np.array(adc2)
             
