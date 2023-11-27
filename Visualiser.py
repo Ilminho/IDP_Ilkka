@@ -6,17 +6,15 @@ import pywt
 import math
 from Timer import Timer
 from scipy.signal import find_peaks, savgol_filter
-from Util import roundList, averageOfList
+from Util import roundList, averageOfList, chunkSizeReducer
 
 
 def Mazrah(signal, threshold=0.8):
     peaks, _ = find_peaks(signal, height=threshold)
     return peaks
 
-def baseline_correction(signal, window_size):
-    if len(signal) < window_size:
-        raise ValueError("Signal length should be greater than or equal to window_size.")
-    baseline = np.convolve(signal, np.ones(window_size) / window_size, mode='same')
+def baseline_correction(signal, npOnes):
+    baseline = np.convolve(signal, npOnes, mode='same')
     corrected_signal = signal - baseline
     return corrected_signal
 
@@ -54,7 +52,12 @@ def Visualiser(file_path,FPS=16, FREQ=50000, TF=2):
     MIN_VALUE=0
     MAX_VALUE=3000
     adc2 = []
-
+    resolutionReducer=0.2
+    ADDEDCHUNK=int(CHUNK/(CHUNK*resolutionReducer))
+    ChunksInPlot=FPS*TF*ADDEDCHUNK
+    TimeOfPeakWidth=1 #Peak width in seconds
+    PeakWidthInReducedChunks=round((FREQ/(FREQ*resolutionReducer))*TimeOfPeakWidth)
+    
     TIMER = Timer()
 
 
@@ -91,20 +94,19 @@ def Visualiser(file_path,FPS=16, FREQ=50000, TF=2):
 
             row = next(csv_stream)
             chunkToAdd=row['adc2']
+            chunkReduced=chunkSizeReducer(CHUNK,resolutionReducer, chunkToAdd)
             
-            roundedChunk=roundList(chunkToAdd)
-
-            adc2.extend(wavelet_denoise(roundedChunk))
+            adc2.extend(chunkReduced)
             
-            if(len(adc2)>TF*FREQ):
-                copy=adc2.copy()[CHUNK:]
+            if(len(adc2)>ChunksInPlot):
+                copy=adc2.copy()[ADDEDCHUNK:]
                 adc2.clear()
                 adc2.extend(copy)
-                
+            
 
             arrayToPlot=np.array(adc2)
             
-            peaks, _ = find_peaks(arrayToPlot, threshold=0.3, width=500)
+            peaks, _ = find_peaks(arrayToPlot, threshold=0.8, width=PeakWidthInReducedChunks, rel_height=0.5)
             
             ax1.clear()
             ax1.set_ylabel('Value')

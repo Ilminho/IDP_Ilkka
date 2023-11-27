@@ -1,11 +1,18 @@
+import math as Math
+
 def roundList(list:list):
     return [int(number) for number in list]
 
 def averageOfList(list:list):
     return sum(list)/(len(list))
 
-def chunkSizeReducer(chunkSize, targetSize):
-    print('lol')
+def chunkSizeReducer(chunkSize, percentToReduce,list):
+    numberOfSubLists=Math.floor(chunkSize/(chunkSize*percentToReduce))
+    lists=split_into_equal_lists(list,numberOfSubLists)
+    listToReturn=[]
+    for list in lists:
+        listToReturn.append(round(sum(list)/len(list)))
+    return listToReturn
     
     
 def split_into_equal_lists(input_list, num_sublists):
